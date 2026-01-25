@@ -10,4 +10,5 @@ public class LoginResponse {
     private String email;
     private String area;
     private String city;
+    private String token;
 }

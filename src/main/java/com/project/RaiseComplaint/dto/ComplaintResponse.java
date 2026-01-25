@@ -11,6 +11,7 @@ public class ComplaintResponse {
     private Long id;
     private String subject;
     private String status;
-    private String authorityName;
+    private String city;
+    private String area;
     private LocalDateTime createdBy;
 }

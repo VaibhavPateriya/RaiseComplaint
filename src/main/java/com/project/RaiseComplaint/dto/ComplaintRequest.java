@@ -5,11 +5,6 @@ import lombok.Data;
 
 @Data
 public class ComplaintRequest {
-    @NotBlank
-    private String area;
-
-    @NotBlank
-    private String city;
 
     @NotBlank
     private String subject;
@@ -17,5 +12,4 @@ public class ComplaintRequest {
     @NotBlank
     private String description;
 
-    private String contact;
 }

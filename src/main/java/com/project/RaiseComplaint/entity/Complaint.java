@@ -19,7 +19,7 @@ public class Complaint {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "authority_id", nullable = false)
+    @JoinColumn(name = "authority_id", nullable = true)
     private Authority authority;
 
     @Column(nullable = false, length = 200)
