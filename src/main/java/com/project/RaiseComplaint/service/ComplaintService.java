@@ -2,8 +2,11 @@ package com.project.RaiseComplaint.service;
 
 import com.project.RaiseComplaint.dto.ComplaintRequest;
 import com.project.RaiseComplaint.dto.ComplaintResponse;
+import com.project.RaiseComplaint.entity.Authority;
 import com.project.RaiseComplaint.entity.Complaint;
+import com.project.RaiseComplaint.entity.ComplaintStatus;
 import com.project.RaiseComplaint.entity.User;
+import com.project.RaiseComplaint.repository.AuthorityRepository;
 import com.project.RaiseComplaint.repository.ComplaintRepository;
 import com.project.RaiseComplaint.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,15 +17,24 @@ import org.springframework.stereotype.Service;
 public class ComplaintService {
     private final ComplaintRepository  complaintRepository;
     private final UserRepository userRepository;
+    private final AuthorityRepository authorityRepository;
 
-    public ComplaintResponse raiseComplaint(ComplaintRequest request, Long userId){
-        User user = userRepository.findById(userId)
+    public ComplaintResponse raiseComplaint(ComplaintRequest request, String email){
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not fond"));
+
+        Authority authority = authorityRepository
+                .findByAreaAndCity(user.getArea(), user.getCity())
+                .orElseThrow(() -> new RuntimeException(
+                        "No authority found for area: " + user.getArea()
+                ));
 
         Complaint complaint = new Complaint();
         complaint.setSubject(request.getSubject());
         complaint.setDescription(request.getDescription());
         complaint.setUser(user);
+        complaint.setAuthority(authority);
+        complaint.setStatus(ComplaintStatus.OPEN);
 
         Complaint saved = complaintRepository.save(complaint);
 
