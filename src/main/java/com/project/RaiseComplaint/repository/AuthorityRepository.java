@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface AuthorityRepository extends JpaRepository<Authority, Long> {
     Optional<Authority> findByAreaAndCity(String area, String city);
+
+    Optional<Authority> findByEmail(String email);
 }

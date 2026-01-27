@@ -12,6 +12,9 @@ import com.project.RaiseComplaint.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ComplaintService {
@@ -46,5 +49,37 @@ public class ComplaintService {
                 saved.getUser().getCity(),
                 saved.getCreatedAt()
         );
+    }
+
+    public List<ComplaintResponse> getMyComplaints(String email){
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not Found"));
+
+        return complaintRepository.findByUser(user)
+                .stream()
+                .map(c -> new ComplaintResponse(
+                        c.getId(),
+                        c.getSubject(),
+                        c.getStatus().name(),
+                        user.getArea(),
+                        user.getCity(),
+                        c.getCreatedAt()
+                ))
+                .toList();
+    }
+
+    public void resolveComplaint(Long complaintId, String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Complaint complaint = complaintRepository
+                .findByIdAndUser(complaintId, user)
+                .orElseThrow(() -> new RuntimeException(
+                        "Complaint not found or not authorized"
+                ));
+        complaint.setStatus(ComplaintStatus.RESOLVED);
+        complaint.setResolvedAt(LocalDateTime.now());
+
+        complaintRepository.save(complaint);
     }
 }

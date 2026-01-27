@@ -5,13 +5,10 @@ import com.project.RaiseComplaint.dto.ComplaintResponse;
 import com.project.RaiseComplaint.service.ComplaintService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/complaints")
@@ -27,5 +24,21 @@ public class ComplaintController {
             ) {
         String email = principal.getName();
         return ResponseEntity.ok(complaintService.raiseComplaint(request, email));
+    }
+
+    @GetMapping("/my")
+    public ResponseEntity<List<ComplaintResponse>> myComplaints(Principal principal) {
+        return ResponseEntity.ok(
+                complaintService.getMyComplaints(principal.getName())
+        );
+    }
+
+    @PutMapping("/{id}/resolve")
+    public ResponseEntity<String> resolveComplaint(
+            @PathVariable Long id,
+            Principal principal
+    ) {
+        complaintService.resolveComplaint(id, principal.getName());
+        return ResponseEntity.ok("Complaint resolved successfully");
     }
 }
