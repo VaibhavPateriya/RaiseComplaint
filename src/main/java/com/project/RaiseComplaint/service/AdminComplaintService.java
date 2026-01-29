@@ -1,7 +1,9 @@
 package com.project.RaiseComplaint.service;
 
 import com.project.RaiseComplaint.dto.ComplaintResponse;
+import com.project.RaiseComplaint.dto.ComplaintStatsResponse;
 import com.project.RaiseComplaint.entity.Authority;
+import com.project.RaiseComplaint.entity.ComplaintStatus;
 import com.project.RaiseComplaint.repository.AuthorityRepository;
 import com.project.RaiseComplaint.repository.ComplaintRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,5 +33,16 @@ public class AdminComplaintService {
                         c.getCreatedAt()
                 ))
                 .toList();
+    }
+
+    public ComplaintStatsResponse getComplaintStats(String email) {
+        Authority authority = authorityRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Authority not found"));
+
+        long total = complaintRepository.countByAuthority(authority);
+        long open = complaintRepository.countByAuthorityAndStatus(authority, ComplaintStatus.OPEN);
+        long resolved = complaintRepository.countByAuthorityAndStatus(authority, ComplaintStatus.RESOLVED);
+
+        return new ComplaintStatsResponse(total, open, resolved);
     }
 }
