@@ -9,5 +9,6 @@ public class ComplaintStatsResponse {
 
     private long total;
     private long open;
+    private long inProgress;
     private long resolved;
 }

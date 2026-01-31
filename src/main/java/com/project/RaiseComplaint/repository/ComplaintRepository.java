@@ -18,4 +18,5 @@ public interface ComplaintRepository extends JpaRepository<Complaint, Long> {
 
     long countByAuthority(Authority authority);
     long countByAuthorityAndStatus(Authority authority, ComplaintStatus status);
+    Optional<Complaint> findByIdAndAuthority(Long id, Authority authority);
 }

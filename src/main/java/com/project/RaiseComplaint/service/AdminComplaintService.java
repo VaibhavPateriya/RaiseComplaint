@@ -2,7 +2,9 @@ package com.project.RaiseComplaint.service;
 
 import com.project.RaiseComplaint.dto.ComplaintResponse;
 import com.project.RaiseComplaint.dto.ComplaintStatsResponse;
+import com.project.RaiseComplaint.dto.UpdateComplaintStatusRequest;
 import com.project.RaiseComplaint.entity.Authority;
+import com.project.RaiseComplaint.entity.Complaint;
 import com.project.RaiseComplaint.entity.ComplaintStatus;
 import com.project.RaiseComplaint.repository.AuthorityRepository;
 import com.project.RaiseComplaint.repository.ComplaintRepository;
@@ -41,8 +43,24 @@ public class AdminComplaintService {
 
         long total = complaintRepository.countByAuthority(authority);
         long open = complaintRepository.countByAuthorityAndStatus(authority, ComplaintStatus.OPEN);
+        long inProgess = complaintRepository.countByAuthorityAndStatus(authority, ComplaintStatus.IN_PROGRESS);
         long resolved = complaintRepository.countByAuthorityAndStatus(authority, ComplaintStatus.RESOLVED);
 
-        return new ComplaintStatsResponse(total, open, resolved);
+        return new ComplaintStatsResponse(total, open, inProgess, resolved);
+    }
+
+    public void updateComplaintStatus(
+            Long complaintId,
+            UpdateComplaintStatusRequest request,
+            String email
+    ) {
+        Authority authority = authorityRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Authority not found"));
+
+        Complaint complaint = complaintRepository
+                .findByIdAndAuthority(complaintId, authority)
+                .orElseThrow(() -> new RuntimeException("Complaint not found"));
+        complaint.setStatus(request.getStatus());
+        complaintRepository.save(complaint);
     }
 }
