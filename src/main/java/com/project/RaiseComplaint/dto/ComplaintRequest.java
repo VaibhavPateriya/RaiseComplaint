@@ -12,4 +12,7 @@ public class ComplaintRequest {
     @NotBlank
     private String description;
 
+    @NotBlank
+    private String contact;
+
 }

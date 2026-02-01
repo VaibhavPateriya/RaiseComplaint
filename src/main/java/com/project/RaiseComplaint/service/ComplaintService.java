@@ -18,13 +18,15 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ComplaintService {
+
     private final ComplaintRepository  complaintRepository;
     private final UserRepository userRepository;
     private final AuthorityRepository authorityRepository;
+    private final EmailService emailService;
 
     public ComplaintResponse raiseComplaint(ComplaintRequest request, String email){
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not fond"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         Authority authority = authorityRepository
                 .findByAreaAndCity(user.getArea(), user.getCity())
@@ -40,6 +42,12 @@ public class ComplaintService {
         complaint.setStatus(ComplaintStatus.OPEN);
 
         Complaint saved = complaintRepository.save(complaint);
+
+        try{
+            emailService.sendComplaintEmail(authority, saved);
+        } catch (Exception e) {
+            System.out.println("Email failed: " + e.getMessage());
+        }
 
         return new ComplaintResponse(
                 saved.getId(),
