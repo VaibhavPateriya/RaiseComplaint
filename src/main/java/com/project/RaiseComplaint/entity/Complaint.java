@@ -38,4 +38,14 @@ public class Complaint {
     @Column(name = "resolved_at")
     private LocalDateTime resolvedAt;
 
+    @Column(name = "target_area")
+    private String targetArea;
+
+    @Column(name = "target_city")
+    private String targetCity;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "authority_type")
+    private Designation authorityType;
+
 }

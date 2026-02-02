@@ -16,8 +16,9 @@ public class Authority {
     @Column(nullable = false)
     private String name;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String designation;
+    private Designation designation;
 
     @Column(nullable = false)
     private String area;

@@ -29,17 +29,27 @@ public class ComplaintService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Authority authority = authorityRepository
-                .findByAreaAndCity(user.getArea(), user.getCity())
+                .findByAreaIgnoreCaseAndCityIgnoreCaseAndDesignation(
+                        request.getArea(),
+                        request.getCity(),
+                        request.getAuthorityType())
                 .orElseThrow(() -> new RuntimeException(
-                        "No authority found for area: " + user.getArea()
+                        "No authority found for selected location and role "
                 ));
 
         Complaint complaint = new Complaint();
         complaint.setSubject(request.getSubject());
         complaint.setDescription(request.getDescription());
+        complaint.setContact(request.getContact());
+
+        complaint.setTargetArea(request.getArea());
+        complaint.setTargetCity(request.getCity());
+        complaint.setAuthorityType(request.getAuthorityType());
+
         complaint.setUser(user);
         complaint.setAuthority(authority);
         complaint.setStatus(ComplaintStatus.OPEN);
+        complaint.setCreatedAt(LocalDateTime.now());
 
         Complaint saved = complaintRepository.save(complaint);
 
@@ -53,8 +63,8 @@ public class ComplaintService {
                 saved.getId(),
                 saved.getSubject(),
                 saved.getStatus().name(),
-                saved.getUser().getArea(),
-                saved.getUser().getCity(),
+                saved.getTargetArea(),
+                saved.getTargetCity(),
                 saved.getCreatedAt()
         );
     }
