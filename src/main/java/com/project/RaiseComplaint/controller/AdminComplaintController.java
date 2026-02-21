@@ -5,6 +5,7 @@ import com.project.RaiseComplaint.dto.ComplaintStatsResponse;
 import com.project.RaiseComplaint.dto.UpdateComplaintStatusRequest;
 import com.project.RaiseComplaint.service.AdminComplaintService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.GsonBuilderUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -51,13 +52,14 @@ public class AdminComplaintController {
             Authentication authentication
             ) {
         String email = authentication.getName();
+        System.out.println("MAIL_USERNAME = " + System.getenv("MAIL_USERNAME"));
+        System.out.println("MAIL_PASSWORD = " + System.getenv("MAIL_PASSWORD"));
 
         adminComplaintService.updateComplaintStatus(
                 complaintId,
                 request,
                 email
         );
-
         return ResponseEntity.ok("Complaint status updates successfully");
     }
 }
